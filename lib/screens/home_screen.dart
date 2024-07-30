@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'auth_screen.dart'; 
+import 'auth_screen.dart';
 import 'event_discovery_screen.dart';
 import 'profile_screen.dart';
 import 'rsvp_screen.dart';
 import 'chat_screen.dart';
 import 'group_screen.dart';
 import 'photo_sharing_screen.dart';
-import 'event_detail_screen.dart'; 
-import 'booking_screen.dart'; 
-import '../models/event_model.dart';
+import 'event_detail_screen.dart';
+import 'booking_screen.dart';
+import '../models/event_model.dart' as model_event;
 
 class HomeScreen extends StatelessWidget {
   final List<String> imgList = [
@@ -19,8 +19,8 @@ class HomeScreen extends StatelessWidget {
     'assets/photo3.jpg',
   ];
 
-  final List<Event> events = [
-    Event(
+  final List<model_event.Event> events = [
+    model_event.Event(
       title: 'Rave Party',
       imageUrl: 'assets/rave_party.jpg',
       venue: 'Country Inn, Manipal',
@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
       entryFee: '₹499',
       highlights: 'Live DJ, Light Shows, Dance Floor, Unlimited Booze',
     ),
-    Event(
+    model_event.Event(
       title: 'Pool Party',
       imageUrl: 'assets/pool_party.jpg',
       venue: 'Radisson Blu, New Delhi',
@@ -36,7 +36,7 @@ class HomeScreen extends StatelessWidget {
       entryFee: '₹599',
       highlights: 'Swimming, Pool Games, BBQ, Booze',
     ),
-    Event(
+    model_event.Event(
       title: 'Sundowner',
       imageUrl: 'assets/sundowner.jpg',
       venue: 'Barrels, Manipal',
@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
       entryFee: '₹799',
       highlights: 'Sunset Views, Cocktails, Live Music',
     ),
-    Event(
+    model_event.Event(
       title: 'BYOB House Party',
       imageUrl: 'assets/house_party.jpg',
       venue: 'Pearl City 201, Manipal',
@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  void _navigateToBooking(BuildContext context, Event event) {
+  void _navigateToBooking(BuildContext context, model_event.Event event) {
     Navigator.push(
       context,
       MaterialPageRoute(
