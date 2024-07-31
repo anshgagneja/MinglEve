@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "819685024679",
+    "project_id": "mingleve",
+    "storage_bucket": "mingleve.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819685024679:android:e16e4133c97fa598194c82",
+        "android_client_info": {
+          "package_name": "com.example.mingleve"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZyhgO7mdh1-tUOEaMYxl2GfE3FR-4nmk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

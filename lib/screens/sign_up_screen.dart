@@ -1,49 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'home_screen.dart';
-import 'sign_up_screen.dart';
-
-class AuthScreen extends StatefulWidget {
+import 'auth_screen.dart'; // Import the AuthScreen
+import 'registration_success_screen.dart';
+class SignUpScreen extends StatefulWidget {
   @override
-  _AuthScreenState createState() => _AuthScreenState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
-  Future<void> _login() async {
+  Future<void> _signUp() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
 
       try {
-        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
 
+        // Save user data in Firestore if needed
+        // await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+        //   'name': _nameController.text,
+        //   'phone': _phoneController.text,
+        // });
+
+        // Navigate to the success screen
         Navigator.pushReplacement(
           context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => HomeScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-          ),
+          MaterialPageRoute(builder: (context) => RegistrationSuccessScreen()),
         );
       } on FirebaseAuthException catch (e) {
         String message = 'An error occurred, please try again';
-        if (e.code == 'user-not-found') {
-          message = 'No user found for that email.';
-        } else if (e.code == 'wrong-password') {
-          message = 'Wrong password provided for that user.';
+        if (e.code == 'weak-password') {
+          message = 'The password provided is too weak.';
+        } else if (e.code == 'email-already-in-use') {
+          message = 'The account already exists for that email.';
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -60,6 +60,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text('Sign Up')),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -90,6 +91,38 @@ class _AuthScreenState extends State<AuthScreen> {
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         children: <Widget>[
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              labelText: 'Name',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your name';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 20),
+                          TextFormField(
+                            controller: _phoneController,
+                            decoration: InputDecoration(
+                              labelText: 'Phone Number',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your phone number';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 20),
                           TextFormField(
                             controller: _emailController,
                             decoration: InputDecoration(
@@ -126,29 +159,19 @@ class _AuthScreenState extends State<AuthScreen> {
                           _isLoading
                               ? CircularProgressIndicator()
                               : ElevatedButton(
-                                  onPressed: _login,
-                                  child: Text('Login'),
+                                  onPressed: _signUp,
+                                  child: Text('Sign Up'),
                                 ),
                           SizedBox(height: 10),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pushNamed('/signUp'); // Navigate to the sign-up screen
+                              Navigator.of(context).pop();
                             },
-                            child: Text('Create an account'),
+                            child: Text('Already have an account? Log In'),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Text('or'),
-                  SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.login),
-                    label: Text('Sign in with Google'),
-                    onPressed: () {
-                      // Implement Google sign-in
-                    },
                   ),
                 ],
               ),
