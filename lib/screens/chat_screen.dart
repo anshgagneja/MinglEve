@@ -1,28 +1,41 @@
+// lib/screens/chat_screen.dart
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'chat_detail_screen.dart';
 
 class ChatScreen extends StatelessWidget {
+  final List<String> contacts = [
+    'Ayushi',
+    'Gracy',
+    'Anoushka',
+    'Swapnil',
+    'Mohini',
+    'Alish',
+    'Vansh',
+    'Abhay',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Chat',
-          style: GoogleFonts.lobster(),
-        ),
-        backgroundColor: Colors.deepPurpleAccent,
+        title: Text('Chats'),
       ),
-      body: Center(
-        child: Hero(
-          tag: 'Chat',
-          child: Material(
-            color: Colors.transparent,
-            child: Text(
-              'Chat Screen',
-              style: TextStyle(fontSize: 24, color: Colors.white),
+      body: ListView.builder(
+        itemCount: contacts.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: CircleAvatar(
+              child: Text(contacts[index][0]),
             ),
-          ),
-        ),
+            title: Text(contacts[index]),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ChatDetailScreen(contact: contacts[index]),
+              ));
+            },
+          );
+        },
       ),
     );
   }
