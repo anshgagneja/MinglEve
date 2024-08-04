@@ -27,6 +27,7 @@ class HomeScreen extends StatelessWidget {
       expectedPopulation: '300+',
       entryFee: '₹499',
       highlights: 'Live DJ, Light Shows, Dance Floor, Unlimited Booze',
+      date: DateTime.now(), // Example, adjust as necessary
     ),
     model_event.Event(
       title: 'Pool Party',
@@ -35,6 +36,7 @@ class HomeScreen extends StatelessWidget {
       expectedPopulation: '150+',
       entryFee: '₹599',
       highlights: 'Swimming, Pool Games, BBQ, Booze',
+      date: DateTime.now(), // Example, adjust as necessary
     ),
     model_event.Event(
       title: 'Sundowner',
@@ -43,6 +45,7 @@ class HomeScreen extends StatelessWidget {
       expectedPopulation: '100+',
       entryFee: '₹799',
       highlights: 'Sunset Views, Cocktails, Live Music',
+      date: DateTime.now(), // Example, adjust as necessary
     ),
     model_event.Event(
       title: 'BYOB House Party',
@@ -51,6 +54,7 @@ class HomeScreen extends StatelessWidget {
       expectedPopulation: '50+',
       entryFee: '₹199',
       highlights: 'Casual Hangout, Music, Games',
+      date: DateTime.now(), // Example, adjust as necessary
     ),
   ];
 
@@ -66,6 +70,15 @@ class HomeScreen extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => BookingScreen(event: event),
+      ),
+    );
+  }
+
+  void _navigateToRSVP(BuildContext context, model_event.Event event) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RSVP_Screen(event: event),
       ),
     );
   }
@@ -118,9 +131,10 @@ class HomeScreen extends StatelessWidget {
               icon: Icons.check_circle,
               text: 'RSVP',
               onTap: () {
+                // This should probably navigate to an RSVP list or similar, not a specific screen.
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => RSVP_Screen()),
+                  MaterialPageRoute(builder: (context) => EventDiscoveryScreen()),
                 );
               },
             ),
@@ -259,9 +273,18 @@ class HomeScreen extends StatelessWidget {
                             Text('Entry Fee: ${event.entryFee}'),
                             Text('Highlights: ${event.highlights}'),
                             SizedBox(height: 10),
-                            ElevatedButton(
-                              onPressed: () => _navigateToBooking(context, event),
-                              child: Text('Book Now'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () => _navigateToBooking(context, event),
+                                  child: Text('Book Now'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => _navigateToRSVP(context, event),
+                                  child: Text('RSVP'),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -292,7 +315,7 @@ class DrawerItem extends StatelessWidget {
       leading: Icon(icon, color: Colors.deepPurple),
       title: Text(text),
       onTap: () {
-        Navigator.pop(context); 
+        Navigator.pop(context); // Close the drawer
         onTap();
       },
     );

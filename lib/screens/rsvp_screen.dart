@@ -1,47 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:mingleve/services/firestore_service.dart'; 
+import '../models/event_model.dart' as model_event;
 
-class RSVP_Screen extends StatefulWidget {
-  @override
-  _RSVP_ScreenState createState() => _RSVP_ScreenState();
-}
+class RSVP_Screen extends StatelessWidget {
+  final model_event.Event event;
 
-class _RSVP_ScreenState extends State<RSVP_Screen> {
-  final String eventId = 'some_event_id'; // Replace with actual event ID
-  final String eventTitle = 'Sample Event'; // Replace with actual event title
-  final FirestoreService _firestoreService = FirestoreService();
-
-  void _rsvp() async {
-    await _firestoreService.addRSVP(eventId, eventTitle);
-    // Handle UI changes or show a message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('RSVP added for $eventTitle')),
-    );
-  }
-
-  void _cancelRSVP() async {
-    await _firestoreService.removeRSVP(eventId);
-    // Handle UI changes or show a message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('RSVP canceled for $eventTitle')),
-    );
-  }
+  RSVP_Screen({required this.event});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('RSVP')),
-      body: Center(
+      appBar: AppBar(
+        title: Text('RSVP'),
+        backgroundColor: Colors.deepPurpleAccent,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ElevatedButton(
-              onPressed: _rsvp,
-              child: Text('RSVP'),
+            Text(
+              event.title,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+            SizedBox(height: 10),
+            Text('Venue: ${event.venue}'),
+            Text('Date: ${event.date}'),  // Assuming date is part of the event model
+            Text('Expected Population: ${event.expectedPopulation}'),
+            Text('Entry Fee: ${event.entryFee}'),
+            Text('Highlights: ${event.highlights}'),
+            SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _cancelRSVP,
-              child: Text('Cancel RSVP'),
+              onPressed: () {
+                // Handle RSVP functionality here
+              },
+              child: Text('RSVP'),
             ),
           ],
         ),

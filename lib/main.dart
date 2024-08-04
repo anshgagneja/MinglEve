@@ -44,6 +44,7 @@ class MinglEveApp extends StatelessWidget {
         expectedPopulation: '500',
         entryFee: '₹1000',
         highlights: 'Music, Dance, Lights',
+        date: DateTime(2024, 8, 10),
       ),
       Event(
         title: 'Sundowner',
@@ -52,6 +53,7 @@ class MinglEveApp extends StatelessWidget {
         expectedPopulation: '300',
         entryFee: '₹800',
         highlights: 'Sunset, Music, Drinks',
+        date: DateTime(2024, 8, 15),
       ),
       // Add more dummy events as needed
     ];

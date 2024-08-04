@@ -5,7 +5,8 @@ class Event {
   final String expectedPopulation;
   final String entryFee;
   final String highlights;
-  final bool isBooked; // Add this field
+  final bool isBooked;
+  final DateTime date; // Add this field
 
   Event({
     required this.title,
@@ -14,6 +15,7 @@ class Event {
     required this.expectedPopulation,
     required this.entryFee,
     required this.highlights,
+    required this.date,
     this.isBooked = false, // Default to false
   });
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'event_list_screen.dart';
 import '../models/event_model.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final List<Event> upcomingEvents = [
@@ -12,7 +13,8 @@ class ProfileScreen extends StatelessWidget {
       expectedPopulation: '300+',
       entryFee: '₹499',
       highlights: 'Live DJ, Light Shows, Dance Floor, Unlimited Booze',
-      isBooked: true, // Set this to true if the user has booked it
+      isBooked: true,
+      date: DateTime(2024, 9, 15), // Example date
     ),
     Event(
       title: 'Sundowner',
@@ -21,7 +23,8 @@ class ProfileScreen extends StatelessWidget {
       expectedPopulation: '100+',
       entryFee: '₹799',
       highlights: 'Sunset Views, Cocktails, Live Music',
-      isBooked: false, // Set this according to the booking status
+      isBooked: false,
+      date: DateTime(2024, 10, 5), // Example date
     ),
   ];
 
@@ -33,7 +36,8 @@ class ProfileScreen extends StatelessWidget {
       expectedPopulation: '50+',
       entryFee: '₹199',
       highlights: 'Casual Hangout, Music, Games',
-      isBooked: true, // Assume this is booked
+      isBooked: true,
+      date: DateTime(2024, 7, 20), // Example date
     ),
     Event(
       title: 'New Year\'s Eve',
@@ -42,7 +46,8 @@ class ProfileScreen extends StatelessWidget {
       expectedPopulation: '200+',
       entryFee: '₹999',
       highlights: 'Celebrations, Music, Dance, Party Favors',
-      isBooked: true, // Assume this is booked
+      isBooked: true,
+      date: DateTime(2023, 12, 31), // Example date
     ),
     Event(
       title: 'Prom Night',
@@ -51,7 +56,8 @@ class ProfileScreen extends StatelessWidget {
       expectedPopulation: '150+',
       entryFee: '₹799',
       highlights: 'Formal Dance, Dinner, Entertainment',
-      isBooked: true, // Assume this is booked
+      isBooked: true,
+      date: DateTime(2024, 4, 15), // Example date
     ),
   ];
 
@@ -128,6 +134,7 @@ class ProfileScreen extends StatelessWidget {
               },
               child: Text('Upcoming Events'),
             ),
+            SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -145,7 +152,12 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to settings screen or open settings dialog
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsScreen(), // Navigate to SettingsScreen
+                  ),
+                );
               },
               child: Text('Settings'),
             ),
