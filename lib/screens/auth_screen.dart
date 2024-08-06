@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'home_screen.dart';
-import 'sign_up_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -13,6 +14,8 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _verificationId = '';
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
@@ -21,7 +24,7 @@ class _AuthScreenState extends State<AuthScreen> {
       });
 
       try {
-        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
@@ -55,6 +58,147 @@ class _AuthScreenState extends State<AuthScreen> {
         });
       }
     }
+  }
+
+  Future<void> _verifyPhoneNumber() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final TextEditingController _phoneNumberController = TextEditingController();
+        PhoneNumber number = PhoneNumber(isoCode: 'US');
+
+        return AlertDialog(
+          title: Text('Enter Phone Number'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InternationalPhoneNumberInput(
+                onInputChanged: (PhoneNumber phoneNumber) {
+                  number = phoneNumber;
+                },
+                selectorConfig: SelectorConfig(
+                  selectorType: PhoneInputSelectorType.DROPDOWN,
+                ),
+                ignoreBlank: false,
+                autoValidateMode: AutovalidateMode.disabled,
+                selectorTextStyle: TextStyle(color: Colors.black),
+                initialValue: number,
+                textFieldController: _phoneNumberController,
+                formatInput: false,
+                keyboardType: TextInputType.numberWithOptions(signed: true, decimal: true),
+                inputBorder: OutlineInputBorder(),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                setState(() {
+                  _isLoading = true;
+                });
+                String phoneNumber = number.phoneNumber!;
+                await _auth.verifyPhoneNumber(
+                  phoneNumber: phoneNumber,
+                  verificationCompleted: (PhoneAuthCredential credential) async {
+                    await _auth.signInWithCredential(credential);
+                    Navigator.pushReplacement(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) => HomeScreen(),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  verificationFailed: (FirebaseAuthException e) {
+                    Fluttertoast.showToast(
+                      msg: 'Verification failed: ${e.message}',
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.CENTER,
+                    );
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  },
+                  codeSent: (String verificationId, int? resendToken) {
+                    setState(() {
+                      _verificationId = verificationId;
+                      _isLoading = false;
+                    });
+
+                    _showOtpDialog();
+                  },
+                  codeAutoRetrievalTimeout: (String verificationId) {
+                    setState(() {
+                      _verificationId = verificationId;
+                    });
+                  },
+                );
+              },
+              child: Text('Verify'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showOtpDialog() async {
+    final _otpController = TextEditingController();
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter OTP'),
+          content: TextField(
+            controller: _otpController,
+            decoration: InputDecoration(
+              labelText: 'OTP',
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                final credential = PhoneAuthProvider.credential(
+                  verificationId: _verificationId,
+                  smsCode: _otpController.text,
+                );
+
+                try {
+                  await _auth.signInWithCredential(credential);
+                  Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) => HomeScreen(),
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        );
+                      },
+                    ),
+                  );
+                } catch (e) {
+                  Fluttertoast.showToast(
+                    msg: 'Invalid OTP',
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.CENTER,
+                  );
+                }
+              },
+              child: Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -149,6 +293,11 @@ class _AuthScreenState extends State<AuthScreen> {
                     onPressed: () {
                       // Implement Google sign-in
                     },
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _verifyPhoneNumber,
+                    child: Text('Sign in with Phone Number'),
                   ),
                 ],
               ),
