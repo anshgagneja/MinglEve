@@ -12,7 +12,12 @@ import 'event_detail_screen.dart';
 import 'booking_screen.dart';
 import '../models/event_model.dart' as model_event;
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final List<String> imgList = [
     'assets/photo1.jpg',
     'assets/photo2.jpg',
@@ -58,6 +63,8 @@ class HomeScreen extends StatelessWidget {
     ),
   ];
 
+  final Set<model_event.Event> rsvpEvents = {};
+
   void _logout(BuildContext context) {
     Navigator.pushReplacement(
       context,
@@ -74,13 +81,14 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  void _navigateToRSVP(BuildContext context, model_event.Event event) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RSVP_Screen(event: event),
-      ),
-    );
+  void _toggleRSVP(model_event.Event event) {
+    setState(() {
+      if (rsvpEvents.contains(event)) {
+        rsvpEvents.remove(event); // Cancel RSVP
+      } else {
+        rsvpEvents.add(event); // Add RSVP
+      }
+    });
   }
 
   @override
@@ -131,10 +139,11 @@ class HomeScreen extends StatelessWidget {
               icon: Icons.check_circle,
               text: 'RSVP',
               onTap: () {
-                // This should probably navigate to an RSVP list or similar, not a specific screen.
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EventDiscoveryScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => RSVP_Screen(rsvpEvents: rsvpEvents.toList()),
+                  ),
                 );
               },
             ),
@@ -281,8 +290,10 @@ class HomeScreen extends StatelessWidget {
                                   child: Text('Book Now'),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () => _navigateToRSVP(context, event),
-                                  child: Text('RSVP'),
+                                  onPressed: () => _toggleRSVP(event),
+                                  child: Text(
+                                    rsvpEvents.contains(event) ? 'Cancel RSVP' : 'RSVP',
+                                  ),
                                 ),
                               ],
                             ),

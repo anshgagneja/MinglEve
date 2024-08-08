@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import '../models/event_model.dart' as model_event;
 import 'booking_screen.dart';
 import 'rsvp_screen.dart';
 import 'event_detail_screen.dart';
 
-class EventDiscoveryScreen extends StatelessWidget {
+class EventDiscoveryScreen extends StatefulWidget {
+  @override
+  _EventDiscoveryScreenState createState() => _EventDiscoveryScreenState();
+}
+
+class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
   final List<model_event.Event> events = [
     model_event.Event(
       title: 'Rave Party',
@@ -46,6 +50,8 @@ class EventDiscoveryScreen extends StatelessWidget {
     ),
   ];
 
+  List<model_event.Event> rsvpEvents = [];
+
   void _navigateToBooking(BuildContext context, model_event.Event event) {
     Navigator.push(
       context,
@@ -55,13 +61,18 @@ class EventDiscoveryScreen extends StatelessWidget {
     );
   }
 
-  void _navigateToRSVP(BuildContext context, model_event.Event event) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RSVP_Screen(event: event),
-      ),
-    );
+  void _toggleRSVP(model_event.Event event) {
+    setState(() {
+      if (rsvpEvents.contains(event)) {
+        rsvpEvents.remove(event);
+      } else {
+        rsvpEvents.add(event);
+      }
+    });
+  }
+
+  bool _isRSVPd(model_event.Event event) {
+    return rsvpEvents.contains(event);
   }
 
   @override
@@ -139,8 +150,8 @@ class EventDiscoveryScreen extends StatelessWidget {
                                   child: Text('Book Now'),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () => _navigateToRSVP(context, event),
-                                  child: Text('RSVP'),
+                                  onPressed: () => _toggleRSVP(event),
+                                  child: Text(_isRSVPd(event) ? 'Cancel RSVP' : 'RSVP'),
                                 ),
                               ],
                             ),
@@ -153,6 +164,17 @@ class EventDiscoveryScreen extends StatelessWidget {
               )).toList(),
             ),
             SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RSVP_Screen(rsvpEvents: rsvpEvents),
+                  ),
+                );
+              },
+              child: Text('View My RSVPs'),
+            ),
           ],
         ),
       ),
