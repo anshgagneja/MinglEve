@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'home_screen.dart';
+import 'admin_home_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   String _verificationId = '';
+  String _selectedRole = 'User'; // Default role
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
@@ -26,23 +28,47 @@ class _AuthScreenState extends State<AuthScreen> {
       });
 
       try {
-        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
+        if (_selectedRole == 'Admin') {
+          // Admin login check
+          if (_emailController.text == 'admin@gmail.com' && _passwordController.text == 'admin@123') {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => AdminHomeScreen(),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  );
+                },
+              ),
+            );
+          } else {
+            Fluttertoast.showToast(
+              msg: 'Invalid admin credentials',
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+            );
+          }
+        } else {
+          UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
 
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => HomeScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-          ),
-        );
+          Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => HomeScreen(),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            ),
+          );
+        }
       } on FirebaseAuthException catch (e) {
         String message = 'An error occurred, please try again';
         if (e.code == 'user-not-found') {
@@ -63,6 +89,15 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
+    if (_selectedRole == 'Admin') {
+      Fluttertoast.showToast(
+        msg: 'Google sign-in is disabled for Admin',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -110,6 +145,15 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _verifyPhoneNumber() async {
+    if (_selectedRole == 'Admin') {
+      Fluttertoast.showToast(
+        msg: 'Phone sign-in is disabled for Admin',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -316,6 +360,31 @@ class _AuthScreenState extends State<AuthScreen> {
                             },
                           ),
                           SizedBox(height: 20),
+                          ListTile(
+                            title: Text('User'),
+                            leading: Radio<String>(
+                              value: 'User',
+                              groupValue: _selectedRole,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _selectedRole = value!;
+                                });
+                              },
+                            ),
+                          ),
+                          ListTile(
+                            title: Text('Admin'),
+                            leading: Radio<String>(
+                              value: 'Admin',
+                              groupValue: _selectedRole,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _selectedRole = value!;
+                                });
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 20),
                           _isLoading
                               ? CircularProgressIndicator()
                               : ElevatedButton(
@@ -334,18 +403,20 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  Text('or'),
-                  SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.login),
-                    label: Text('Sign in with Google'),
-                    onPressed: _signInWithGoogle,
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _verifyPhoneNumber,
-                    child: Text('Sign in with Phone Number'),
-                  ),
+                  if (_selectedRole == 'User') ...[
+                    Text('or'),
+                    SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.login),
+                      label: Text('Sign in with Google'),
+                      onPressed: _signInWithGoogle,
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _verifyPhoneNumber,
+                      child: Text('Sign in with Phone Number'),
+                    ),
+                  ],
                 ],
               ),
             ),

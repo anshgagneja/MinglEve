@@ -8,7 +8,9 @@ import 'screens/profile_screen.dart';
 import 'screens/event_list_screen.dart';
 import 'screens/sign_up_screen.dart';
 import 'screens/settings_screen.dart';
-import '../models/event_model.dart'; // Import your Event model
+import 'screens/admin_home_screen.dart';  
+import 'screens/create_event_screen.dart';
+import 'models/event_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -88,6 +90,8 @@ class MinglEveApp extends StatelessWidget {
         ),
         '/settings': (context) => SettingsScreen(),
         '/signUp': (context) => SignUpScreen(), // Route to the SignUpScreen
+        '/adminHome': (context) => AdminHomeScreen(),
+        '/createEvent': (context) => CreateEventScreen(),
       },
     );
   }
