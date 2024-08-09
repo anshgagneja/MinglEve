@@ -23,7 +23,7 @@ dependencies:
   intl_phone_number_input: ^0.7.4
   image_picker: ^1.1.2
   firebase_storage: ^12.1.3
-
+  flutter_native_splash: ^2.4.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -31,6 +31,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png" # Path to your logo image
 
 flutter:
   uses-material-design: true
@@ -52,3 +58,10 @@ flutter:
     - assets/holiday_trips.png
     - assets/club_nights.png
     - assets/festivals.png
+
+flutter_native_splash:
+  color: "#ffffff" # Background color
+  image: assets/logo.png # Path to your logo image
+  android: true
+  ios: true
+
