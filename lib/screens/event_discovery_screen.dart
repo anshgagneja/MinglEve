@@ -50,7 +50,7 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
     ),
   ];
 
-  List<model_event.Event> rsvpEvents = [];
+  final List<model_event.Event> rsvpEvents = [];
 
   void _navigateToBooking(BuildContext context, model_event.Event event) {
     Navigator.push(
@@ -110,58 +110,62 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
             ),
             SizedBox(height: 10),
             Column(
-              children: events.map((event) => GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EventDetailsScreen(event: event),
-                    ),
-                  );
-                },
-                child: Card(
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Image.asset(event.imageUrl),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              event.title,
-                              style: GoogleFonts.openSans(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+              children: events
+                  .map((event) => GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EventDetailsScreen(event: event),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Image.asset(event.imageUrl),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      event.title,
+                                      style: GoogleFonts.openSans(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text('Venue: ${event.venue}'),
+                                    Text('Expected Population: ${event.expectedPopulation}'),
+                                    Text('Entry Fee: ${event.entryFee}'),
+                                    Text('Highlights: ${event.highlights}'),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () => _navigateToBooking(context, event),
+                                          child: Text('Book Now'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () => _toggleRSVP(event),
+                                          child: Text(
+                                            _isRSVPd(event) ? 'Cancel RSVP' : 'RSVP',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Text('Venue: ${event.venue}'),
-                            Text('Expected Population: ${event.expectedPopulation}'),
-                            Text('Entry Fee: ${event.entryFee}'),
-                            Text('Highlights: ${event.highlights}'),
-                            SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () => _navigateToBooking(context, event),
-                                  child: Text('Book Now'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () => _toggleRSVP(event),
-                                  child: Text(_isRSVPd(event) ? 'Cancel RSVP' : 'RSVP'),
-                                ),
-                              ],
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              )).toList(),
+                      ))
+                  .toList(),
             ),
             SizedBox(height: 30),
             ElevatedButton(

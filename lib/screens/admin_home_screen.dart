@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'auth_screen.dart'; // Adjust import as necessary
+import 'admin_dashboard_screen.dart'; // Import the AdminDashboardScreen
 
 class AdminHomeScreen extends StatelessWidget {
   @override
@@ -27,6 +28,16 @@ class AdminHomeScreen extends StatelessWidget {
               ),
             ),
             ListTile(
+              leading: Icon(Icons.dashboard, color: Colors.white),
+              title: Text('Analytics Dashboard', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
+                );
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.event, color: Colors.white),
               title: Text('Create Event', style: TextStyle(color: Colors.white)),
               onTap: () {
@@ -52,6 +63,20 @@ class AdminHomeScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
+                  );
+                },
+                child: Text('View Analytics Dashboard'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent, // Button color
+                  foregroundColor: Colors.white, // Text color
+                ),
+              ),
+              SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed('/createEvent');
