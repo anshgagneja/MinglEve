@@ -26,8 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<model_event.Event> events = [
     model_event.Event(
-      title: 'Rave Party',
-      imageUrl: 'assets/rave_party.jpg',
+      title: 'Masquerade Party',
+      imageUrl: 'assets/masquerade_party.jpg',
       venue: 'Country Inn, Manipal',
       expectedPopulation: '300+',
       entryFee: '₹499',
